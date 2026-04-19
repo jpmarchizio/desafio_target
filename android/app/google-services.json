@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1082605898270",
+    "project_id": "target-todo-jpmarchizio",
+    "storage_bucket": "target-todo-jpmarchizio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1082605898270:android:e7aa68a61e7441b432fc0f",
+        "android_client_info": {
+          "package_name": "com.example.desafio_target"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk4F1F0dbCTXA9wbkc1kQJXQFFC-Vj_vs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
