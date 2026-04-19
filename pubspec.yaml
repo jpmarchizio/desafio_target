@@ -10,10 +10,17 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.8
+  # Dependency injection
+  get_it: ^8.0.3
+
+  # Navigation
+  go_router: ^15.1.2
 
   # Fonts
   google_fonts: ^6.2.1
+
+  # Others
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
