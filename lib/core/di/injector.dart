@@ -4,8 +4,10 @@ import 'package:desafio_target/features/auth/domain/repositories/auth_repository
 import 'package:desafio_target/features/auth/domain/usecases/send_password_reset_email_usecase.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_in_anonymously_usecase.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_in_usecase.dart';
+import 'package:desafio_target/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/forgot_password_controller.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/login_controller.dart';
+import 'package:desafio_target/features/auth/presentation/controllers/signup_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -21,6 +23,7 @@ Future<void> setupInjector() async {
   getIt.registerLazySingleton<SignInUseCase>(() => SignInUseCase(getIt<AuthRepository>()));
   getIt.registerLazySingleton<SignInAnonymouslyUseCase>(() => SignInAnonymouslyUseCase(getIt<AuthRepository>()));
   getIt.registerLazySingleton<SendPasswordResetEmailUseCase>(() => SendPasswordResetEmailUseCase(getIt<AuthRepository>()));
+  getIt.registerLazySingleton<SignUpUseCase>(() => SignUpUseCase(getIt<AuthRepository>()));
 
   // Controllers
   getIt.registerFactory<LoginController>(
@@ -28,5 +31,8 @@ Future<void> setupInjector() async {
   );
   getIt.registerFactory<ForgotPasswordController>(
     () => ForgotPasswordController(getIt<SendPasswordResetEmailUseCase>()),
+  );
+  getIt.registerFactory<SignupController>(
+    () => SignupController(getIt<SignUpUseCase>()),
   );
 }

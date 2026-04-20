@@ -101,23 +101,27 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Widget _emailField() {
     return Observer(
-      builder: (_) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppTextField(
-            label: 'E-mail',
-            hint: 'seu@email.com',
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.done,
-            onChanged: _controller.onEmailChanged,
-          ),
-          if (_controller.emailError != null) ...[
-            const SizedBox(height: 6),
-            AppText.bodySmall(_controller.emailError!, color: AppColors.error),
+      builder: (_) {
+        final emailError = _controller.emailError;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppTextField(
+              label: 'E-mail',
+              hint: 'seu@email.com',
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+              onChanged: _controller.onEmailChanged,
+            ),
+            if (emailError != null) ...[
+              const SizedBox(height: 6),
+              AppText.bodySmall(emailError, color: AppColors.error),
+            ],
           ],
-        ],
-      ),
+        );
+      },
     );
   }
 

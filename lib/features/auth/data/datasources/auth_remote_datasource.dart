@@ -33,6 +33,19 @@ class AuthRemoteDataSource {
     }
   }
 
+  Future<Result<User>> signUp(String email, String password) async {
+    try {
+      final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      final user = credential.user;
+
+      if (user == null) return Failure(ErrorHandler.handle('user is null'));
+
+      return Success(user);
+    } catch (e) {
+      return Failure(ErrorHandler.handleFirebaseAuth(e));
+    }
+  }
+
   Future<Result<void>> sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
