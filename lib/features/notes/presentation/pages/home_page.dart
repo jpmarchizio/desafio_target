@@ -147,13 +147,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _notesList() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+
     return RefreshIndicator(
       onRefresh: _controller.loadNotes,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        itemCount: _controller.notes.length,
+        itemCount: _controller.notes.length + 1,
         separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (_, index) {
+          if (index == _controller.notes.length) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 8),
+              child: Center(
+                child: TextButton.icon(
+                  onPressed: () => context.push(AppRouter.stats),
+                  icon: Icon(Icons.bar_chart_outlined, color: textSecondary),
+                  label: AppText.body('Ver estatísticas', color: textSecondary),
+                ),
+              ),
+            );
+          }
+
           final note = _controller.notes[index];
 
           return NoteCard(

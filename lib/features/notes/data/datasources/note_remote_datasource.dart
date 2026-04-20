@@ -23,6 +23,7 @@ class NoteRemoteDataSource {
         title: data['title'] as String?,
         content: data['content'] as String,
         createdAt: (data['createdAt'] as Timestamp).toDate(),
+        editCount: (data['editCount'] as int?) ?? 0,
       );
     }).toList();
   }
@@ -32,12 +33,14 @@ class NoteRemoteDataSource {
         'title': note.title,
         'content': note.content,
         'createdAt': Timestamp.fromDate(note.createdAt),
+        'editCount': note.editCount,
       });
 
   Future<void> editNote(String uid, NoteModel note) =>
       _collection(uid).doc(note.id).update({
         'title': note.title,
         'content': note.content,
+        'editCount': note.editCount,
       });
 
   Future<void> deleteNote(String uid, String id) => _collection(uid).doc(id).delete();

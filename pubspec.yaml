@@ -32,6 +32,9 @@ dependencies:
   # Fonts
   google_fonts: ^6.2.1
 
+  # Charts
+  fl_chart: ^0.70.2
+
   # Others
   cupertino_icons: ^1.0.8
 

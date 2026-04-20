@@ -7,12 +7,12 @@ class NoteAdapter extends TypeAdapter<NoteModel> {
 
   @override
   NoteModel read(BinaryReader reader) {
-    return NoteModel(
-      id: reader.readString(),
-      title: reader.readBool() ? reader.readString() : null,
-      content: reader.readString(),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(reader.readInt()),
-    );
+    final id = reader.readString();
+    final title = reader.readBool() ? reader.readString() : null;
+    final content = reader.readString();
+    final createdAt = DateTime.fromMillisecondsSinceEpoch(reader.readInt());
+    final editCount = reader.availableBytes > 0 ? reader.readInt() : 0;
+    return NoteModel(id: id, title: title, content: content, createdAt: createdAt, editCount: editCount);
   }
 
   @override
@@ -22,5 +22,6 @@ class NoteAdapter extends TypeAdapter<NoteModel> {
     if (obj.title != null) writer.writeString(obj.title!);
     writer.writeString(obj.content);
     writer.writeInt(obj.createdAt.millisecondsSinceEpoch);
+    writer.writeInt(obj.editCount);
   }
 }

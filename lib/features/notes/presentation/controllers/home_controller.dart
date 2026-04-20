@@ -38,7 +38,8 @@ abstract class _HomeController with Store {
   Future<void> loadNotes() async {
     errorMessage = null;
     isLoading = true;
-    isLoggedIn = _auth.currentUser != null && !(_auth.currentUser!.isAnonymous);
+    final user = _auth.currentUser;
+    isLoggedIn = user != null && !user.isAnonymous;
 
     final result = await _getNotes();
 
@@ -72,7 +73,13 @@ abstract class _HomeController with Store {
 
   @action
   Future<void> editNote(NoteModel note, String? title, String content) async {
-    final updated = NoteModel(id: note.id, title: title, content: content, createdAt: note.createdAt);
+    final updated = NoteModel(
+      id: note.id,
+      title: title,
+      content: content,
+      createdAt: note.createdAt,
+      editCount: note.editCount + 1,
+    );
 
     final result = await _editNote(updated);
     if (result is Failure) {

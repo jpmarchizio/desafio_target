@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:desafio_target/core/theme/theme_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:desafio_target/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:desafio_target/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:desafio_target/features/auth/domain/repositories/auth_repository.dart';
@@ -20,8 +19,10 @@ import 'package:desafio_target/features/notes/domain/usecases/edit_note_usecase.
 import 'package:desafio_target/features/notes/domain/usecases/get_notes_usecase.dart';
 import 'package:desafio_target/features/notes/domain/usecases/migrate_notes_usecase.dart';
 import 'package:desafio_target/features/notes/presentation/controllers/home_controller.dart';
+import 'package:desafio_target/features/notes/presentation/controllers/stats_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
 
@@ -35,19 +36,17 @@ Future<void> setupInjector(SharedPreferences prefs) async {
 
   // Use Cases
   getIt.registerLazySingleton<SignInUseCase>(() => SignInUseCase(getIt<AuthRepository>()));
-  getIt.registerLazySingleton<SendPasswordResetEmailUseCase>(() => SendPasswordResetEmailUseCase(getIt<AuthRepository>()));
+  getIt.registerLazySingleton<SendPasswordResetEmailUseCase>(
+    () => SendPasswordResetEmailUseCase(getIt<AuthRepository>()),
+  );
   getIt.registerLazySingleton<SignUpUseCase>(() => SignUpUseCase(getIt<AuthRepository>()));
 
   // Controllers
-  getIt.registerFactory<LoginController>(
-    () => LoginController(getIt<SignInUseCase>()),
-  );
+  getIt.registerFactory<LoginController>(() => LoginController(getIt<SignInUseCase>()));
   getIt.registerFactory<ForgotPasswordController>(
     () => ForgotPasswordController(getIt<SendPasswordResetEmailUseCase>()),
   );
-  getIt.registerFactory<SignupController>(
-    () => SignupController(getIt<SignUpUseCase>(), getIt<MigrateNotesUseCase>()),
-  );
+  getIt.registerFactory<SignupController>(() => SignupController(getIt<SignUpUseCase>(), getIt<MigrateNotesUseCase>()));
 
   // Notes
   // Services
@@ -74,4 +73,5 @@ Future<void> setupInjector(SharedPreferences prefs) async {
       FirebaseAuth.instance,
     ),
   );
+  getIt.registerFactory<StatsController>(() => StatsController(getIt<GetNotesUseCase>()));
 }
