@@ -53,7 +53,10 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ElevatedButton(
-                      onPressed: () => context.push(AppRouter.signup),
+                      onPressed: () async {
+                        await context.push(AppRouter.signup);
+                        await _controller.loadNotes();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,

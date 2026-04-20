@@ -33,7 +33,9 @@ class _SignupPageState extends State<SignupPage> {
     _statusDisposer = reaction(
       (_) => _controller.status,
       (AuthStatusEnum status) {
-        if (status == AuthStatusEnum.authenticated) context.go(AppRouter.home);
+        if (status == AuthStatusEnum.authenticated) {
+          context.canPop() ? context.pop() : context.go(AppRouter.home);
+        }
         if (status == AuthStatusEnum.error) {
           final error = _controller.errorMessage;
           if (error == null) return;

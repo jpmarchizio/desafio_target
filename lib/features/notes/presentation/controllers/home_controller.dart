@@ -43,8 +43,8 @@ abstract class _HomeController with Store {
 
     final result = await _getNotes();
 
-    if (result is Failure<List<NoteModel>>) {
-      errorMessage = result.error.message;
+    if (result is Failure) {
+      errorMessage = (result as Failure).error.message;
       isLoading = false;
       return;
     }

@@ -97,7 +97,12 @@ abstract class _SignupController with Store {
     }
 
     final uid = (result as Success).data.uid;
-    await _migrateNotes(uid);
+    final migrateResult = await _migrateNotes(uid);
+    if (migrateResult is Failure) {
+      errorMessage = migrateResult.error.message;
+      status = AuthStatusEnum.error;
+      return;
+    }
 
     status = AuthStatusEnum.authenticated;
   }

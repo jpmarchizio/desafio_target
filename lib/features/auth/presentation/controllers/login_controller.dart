@@ -18,8 +18,8 @@ abstract class _LoginController with Store {
   @observable
   AuthStatusEnum status = AuthStatusEnum.initial;
 
-  @observable
-  bool isSigningIn = false;
+  @computed
+  bool get isLoading => status == AuthStatusEnum.loading;
 
   @observable
   String? errorMessage;
@@ -52,14 +52,12 @@ abstract class _LoginController with Store {
       return;
     }
 
-    isSigningIn = true;
+    status = AuthStatusEnum.loading;
 
     final result = await _signIn(email, password);
     if (result is Failure) {
-      isSigningIn = false;
       errorMessage = (result as Failure).error.message;
       status = AuthStatusEnum.error;
-
       return;
     }
 

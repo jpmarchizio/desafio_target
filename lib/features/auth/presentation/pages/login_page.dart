@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton(
         label: 'Entrar',
-        isLoading: _loginController.isSigningIn,
+        isLoading: _loginController.isLoading,
         onPressed: () => _loginController.signIn(_emailController.text.trim(), _passwordController.text),
       ),
     );
@@ -195,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton.outlined(
         label: 'Continuar sem conta',
-        onPressed: _loginController.isSigningIn ? null : () => context.go(AppRouter.home),
+        onPressed: _loginController.isLoading ? null : () => context.go(AppRouter.home),
       ),
     );
   }

@@ -10,6 +10,9 @@ part 'stats_controller.g.dart';
 class StatsController = _StatsController with _$StatsController;
 
 abstract class _StatsController with Store {
+  static final _letterRegex = RegExp(r'[a-záàãâéêíóôõúüçñ]');
+  static final _digitRegex = RegExp(r'[0-9]');
+
   final GetNotesUseCase _getNotes;
 
   _StatsController(this._getNotes);
@@ -50,8 +53,8 @@ abstract class _StatsController with Store {
     errorMessage = null;
 
     final result = await _getNotes();
-    if (result is Failure<List<NoteModel>>) {
-      errorMessage = result.error.message;
+    if (result is Failure) {
+      errorMessage = (result as Failure).error.message;
       isLoading = false;
       return;
     }
@@ -73,9 +76,9 @@ abstract class _StatsController with Store {
     final digits = <String, int>{};
 
     for (final char in allContent.toLowerCase().split('')) {
-      if (RegExp(r'[a-záàãâéêíóôõúüçñ]').hasMatch(char)) {
+      if (_letterRegex.hasMatch(char)) {
         letters[char] = (letters[char] ?? 0) + 1;
-      } else if (RegExp(r'[0-9]').hasMatch(char)) {
+      } else if (_digitRegex.hasMatch(char)) {
         digits[char] = (digits[char] ?? 0) + 1;
       }
     }

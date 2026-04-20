@@ -117,6 +117,42 @@ mixin _$StatsController on _StatsController, Store {
     });
   }
 
+  late final _$totalLettersAtom = Atom(
+    name: '_StatsController.totalLetters',
+    context: context,
+  );
+
+  @override
+  int get totalLetters {
+    _$totalLettersAtom.reportRead();
+    return super.totalLetters;
+  }
+
+  @override
+  set totalLetters(int value) {
+    _$totalLettersAtom.reportWrite(value, super.totalLetters, () {
+      super.totalLetters = value;
+    });
+  }
+
+  late final _$totalDigitsAtom = Atom(
+    name: '_StatsController.totalDigits',
+    context: context,
+  );
+
+  @override
+  int get totalDigits {
+    _$totalDigitsAtom.reportRead();
+    return super.totalDigits;
+  }
+
+  @override
+  set totalDigits(int value) {
+    _$totalDigitsAtom.reportWrite(value, super.totalDigits, () {
+      super.totalDigits = value;
+    });
+  }
+
   late final _$letterFrequencyAtom = Atom(
     name: '_StatsController.letterFrequency',
     context: context,
@@ -132,6 +168,24 @@ mixin _$StatsController on _StatsController, Store {
   set letterFrequency(ObservableMap<String, int> value) {
     _$letterFrequencyAtom.reportWrite(value, super.letterFrequency, () {
       super.letterFrequency = value;
+    });
+  }
+
+  late final _$digitFrequencyAtom = Atom(
+    name: '_StatsController.digitFrequency',
+    context: context,
+  );
+
+  @override
+  ObservableMap<String, int> get digitFrequency {
+    _$digitFrequencyAtom.reportRead();
+    return super.digitFrequency;
+  }
+
+  @override
+  set digitFrequency(ObservableMap<String, int> value) {
+    _$digitFrequencyAtom.reportWrite(value, super.digitFrequency, () {
+      super.digitFrequency = value;
     });
   }
 
@@ -154,7 +208,10 @@ totalNotes: ${totalNotes},
 totalChars: ${totalChars},
 totalLines: ${totalLines},
 totalEdits: ${totalEdits},
-letterFrequency: ${letterFrequency}
+totalLetters: ${totalLetters},
+totalDigits: ${totalDigits},
+letterFrequency: ${letterFrequency},
+digitFrequency: ${digitFrequency}
     ''';
   }
 }

@@ -1,10 +1,12 @@
 import 'package:desafio_target/core/di/injector.dart';
+import 'package:desafio_target/core/navigation/app_router.dart';
 import 'package:desafio_target/core/theme/app_colors.dart';
 import 'package:desafio_target/core/theme/theme_controller.dart';
 import 'package:desafio_target/features/notes/presentation/controllers/stats_controller.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,8 +41,9 @@ class _StatsPageState extends State<StatsPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         leading: IconButton(
-          onPressed: () => context.canPop() ? context.pop() : context.go('/home'),
+          onPressed: () => context.canPop() ? context.pop() : context.go(AppRouter.home),
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
         ),
         title: const AppText.headline('Estatísticas'),
