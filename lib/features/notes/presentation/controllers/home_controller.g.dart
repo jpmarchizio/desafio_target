@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'note_controller.dart';
+part of 'home_controller.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,9 +8,9 @@ part of 'note_controller.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$NoteController on _NoteController, Store {
+mixin _$HomeController on _HomeController, Store {
   late final _$notesAtom = Atom(
-    name: '_NoteController.notes',
+    name: '_HomeController.notes',
     context: context,
   );
 
@@ -28,7 +28,7 @@ mixin _$NoteController on _NoteController, Store {
   }
 
   late final _$errorMessageAtom = Atom(
-    name: '_NoteController.errorMessage',
+    name: '_HomeController.errorMessage',
     context: context,
   );
 
@@ -46,7 +46,7 @@ mixin _$NoteController on _NoteController, Store {
   }
 
   late final _$isLoadingAtom = Atom(
-    name: '_NoteController.isLoading',
+    name: '_HomeController.isLoading',
     context: context,
   );
 
@@ -63,8 +63,26 @@ mixin _$NoteController on _NoteController, Store {
     });
   }
 
+  late final _$isLoggedInAtom = Atom(
+    name: '_HomeController.isLoggedIn',
+    context: context,
+  );
+
+  @override
+  bool get isLoggedIn {
+    _$isLoggedInAtom.reportRead();
+    return super.isLoggedIn;
+  }
+
+  @override
+  set isLoggedIn(bool value) {
+    _$isLoggedInAtom.reportWrite(value, super.isLoggedIn, () {
+      super.isLoggedIn = value;
+    });
+  }
+
   late final _$loadNotesAsyncAction = AsyncAction(
-    '_NoteController.loadNotes',
+    '_HomeController.loadNotes',
     context: context,
   );
 
@@ -74,7 +92,7 @@ mixin _$NoteController on _NoteController, Store {
   }
 
   late final _$addNoteAsyncAction = AsyncAction(
-    '_NoteController.addNote',
+    '_HomeController.addNote',
     context: context,
   );
 
@@ -84,7 +102,7 @@ mixin _$NoteController on _NoteController, Store {
   }
 
   late final _$editNoteAsyncAction = AsyncAction(
-    '_NoteController.editNote',
+    '_HomeController.editNote',
     context: context,
   );
 
@@ -96,7 +114,7 @@ mixin _$NoteController on _NoteController, Store {
   }
 
   late final _$deleteNoteAsyncAction = AsyncAction(
-    '_NoteController.deleteNote',
+    '_HomeController.deleteNote',
     context: context,
   );
 
@@ -105,12 +123,23 @@ mixin _$NoteController on _NoteController, Store {
     return _$deleteNoteAsyncAction.run(() => super.deleteNote(id));
   }
 
+  late final _$logoutAsyncAction = AsyncAction(
+    '_HomeController.logout',
+    context: context,
+  );
+
+  @override
+  Future<void> logout() {
+    return _$logoutAsyncAction.run(() => super.logout());
+  }
+
   @override
   String toString() {
     return '''
 notes: ${notes},
 errorMessage: ${errorMessage},
-isLoading: ${isLoading}
+isLoading: ${isLoading},
+isLoggedIn: ${isLoggedIn}
     ''';
   }
 }

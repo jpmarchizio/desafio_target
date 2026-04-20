@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:desafio_target/core/theme/theme_controller.dart';
 import 'package:desafio_target/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:desafio_target/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:desafio_target/features/auth/domain/repositories/auth_repository.dart';
 import 'package:desafio_target/features/auth/domain/usecases/send_password_reset_email_usecase.dart';
-import 'package:desafio_target/features/auth/domain/usecases/sign_in_anonymously_usecase.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/forgot_password_controller.dart';
@@ -18,13 +18,15 @@ import 'package:desafio_target/features/notes/domain/usecases/delete_note_usecas
 import 'package:desafio_target/features/notes/domain/usecases/edit_note_usecase.dart';
 import 'package:desafio_target/features/notes/domain/usecases/get_notes_usecase.dart';
 import 'package:desafio_target/features/notes/domain/usecases/migrate_notes_usecase.dart';
-import 'package:desafio_target/features/notes/presentation/controllers/note_controller.dart';
+import 'package:desafio_target/features/notes/presentation/controllers/home_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> setupInjector() async {
+  getIt.registerLazySingleton<ThemeController>(() => ThemeController());
+
   // Auth
   // Services
   getIt.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSource(FirebaseAuth.instance));
@@ -32,13 +34,12 @@ Future<void> setupInjector() async {
 
   // Use Cases
   getIt.registerLazySingleton<SignInUseCase>(() => SignInUseCase(getIt<AuthRepository>()));
-  getIt.registerLazySingleton<SignInAnonymouslyUseCase>(() => SignInAnonymouslyUseCase(getIt<AuthRepository>()));
   getIt.registerLazySingleton<SendPasswordResetEmailUseCase>(() => SendPasswordResetEmailUseCase(getIt<AuthRepository>()));
   getIt.registerLazySingleton<SignUpUseCase>(() => SignUpUseCase(getIt<AuthRepository>()));
 
   // Controllers
   getIt.registerFactory<LoginController>(
-    () => LoginController(getIt<SignInUseCase>(), getIt<SignInAnonymouslyUseCase>()),
+    () => LoginController(getIt<SignInUseCase>()),
   );
   getIt.registerFactory<ForgotPasswordController>(
     () => ForgotPasswordController(getIt<SendPasswordResetEmailUseCase>()),
@@ -63,12 +64,13 @@ Future<void> setupInjector() async {
   getIt.registerLazySingleton<MigrateNotesUseCase>(() => MigrateNotesUseCase(getIt<NoteRepository>()));
 
   // Controllers
-  getIt.registerFactory<NoteController>(
-    () => NoteController(
+  getIt.registerFactory<HomeController>(
+    () => HomeController(
       getIt<GetNotesUseCase>(),
       getIt<AddNoteUseCase>(),
       getIt<EditNoteUseCase>(),
       getIt<DeleteNoteUseCase>(),
+      FirebaseAuth.instance,
     ),
   );
 }

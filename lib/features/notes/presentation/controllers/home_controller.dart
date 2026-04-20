@@ -6,19 +6,21 @@ import 'package:desafio_target/features/notes/domain/usecases/add_note_usecase.d
 import 'package:desafio_target/features/notes/domain/usecases/delete_note_usecase.dart';
 import 'package:desafio_target/features/notes/domain/usecases/edit_note_usecase.dart';
 import 'package:desafio_target/features/notes/domain/usecases/get_notes_usecase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobx/mobx.dart';
 
-part 'note_controller.g.dart';
+part 'home_controller.g.dart';
 
-class NoteController = _NoteController with _$NoteController;
+class HomeController = _HomeController with _$HomeController;
 
-abstract class _NoteController with Store {
+abstract class _HomeController with Store {
   final GetNotesUseCase _getNotes;
   final AddNoteUseCase _addNote;
   final EditNoteUseCase _editNote;
   final DeleteNoteUseCase _deleteNote;
+  final FirebaseAuth _auth;
 
-  _NoteController(this._getNotes, this._addNote, this._editNote, this._deleteNote);
+  _HomeController(this._getNotes, this._addNote, this._editNote, this._deleteNote, this._auth);
 
   @observable
   ObservableList<NoteModel> notes = ObservableList();
@@ -29,10 +31,14 @@ abstract class _NoteController with Store {
   @observable
   bool isLoading = false;
 
+  @observable
+  bool isLoggedIn = false;
+
   @action
   Future<void> loadNotes() async {
     errorMessage = null;
     isLoading = true;
+    isLoggedIn = _auth.currentUser != null && !(_auth.currentUser!.isAnonymous);
 
     final result = await _getNotes();
 
@@ -88,5 +94,10 @@ abstract class _NoteController with Store {
     }
 
     notes.removeWhere((n) => n.id == id);
+  }
+
+  @action
+  Future<void> logout() async {
+    await _auth.signOut();
   }
 }

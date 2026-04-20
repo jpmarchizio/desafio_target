@@ -1,11 +1,12 @@
 import 'package:desafio_target/core/di/injector.dart';
 import 'package:desafio_target/core/navigation/app_router.dart';
 import 'package:desafio_target/core/theme/app_colors.dart';
-import 'package:desafio_target/features/notes/presentation/controllers/note_controller.dart';
+import 'package:desafio_target/features/notes/presentation/controllers/home_controller.dart';
+import 'package:desafio_target/core/theme/theme_controller.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
+import 'package:desafio_target/shared/widgets/confirm_dialog.dart';
 import 'package:desafio_target/shared/widgets/note_card.dart';
 import 'package:desafio_target/shared/widgets/note_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
@@ -18,12 +19,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final NoteController _controller;
+  late final HomeController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = getIt<NoteController>();
+    _controller = getIt<HomeController>();
     _controller.loadNotes();
   }
 
@@ -39,12 +40,49 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: const AppText.headline('Notas'),
         actions: [
-          if (FirebaseAuth.instance.currentUser == null)
-            IconButton(
-              icon: const Icon(Icons.person_add_outlined),
-              tooltip: 'Criar conta',
-              onPressed: () => context.push(AppRouter.signup),
-            ),
+          Observer(builder: (_) {
+            final themeController = getIt<ThemeController>();
+            return Row(
+              children: [
+                IconButton(
+                  icon: Icon(themeController.isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
+                  tooltip: 'Alternar tema',
+                  onPressed: themeController.toggleTheme,
+                ),
+                if (!_controller.isLoggedIn)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ElevatedButton(
+                      onPressed: () => context.push(AppRouter.signup),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size.zero,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        elevation: 0,
+                      ),
+                      child: const AppText.button('Criar conta'),
+                    ),
+                  ),
+                if (_controller.isLoggedIn)
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'Sair',
+                    onPressed: () => ConfirmDialog.show(
+                      context,
+                      title: 'Sair da conta',
+                      message: 'Deseja desconectar da sua conta?',
+                      confirmLabel: 'Sair',
+                      onConfirm: () async {
+                        await _controller.logout();
+                        if (context.mounted) context.go(AppRouter.login);
+                      },
+                    ),
+                  ),
+              ],
+            );
+          }),
         ],
       ),
       body: Observer(builder: (_) {
