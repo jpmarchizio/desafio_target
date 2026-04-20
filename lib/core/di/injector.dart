@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:desafio_target/core/theme/theme_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:desafio_target/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:desafio_target/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:desafio_target/features/auth/domain/repositories/auth_repository.dart';
@@ -24,8 +25,8 @@ import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
 
-Future<void> setupInjector() async {
-  getIt.registerLazySingleton<ThemeController>(() => ThemeController());
+Future<void> setupInjector(SharedPreferences prefs) async {
+  getIt.registerLazySingleton<ThemeController>(() => ThemeController(prefs));
 
   // Auth
   // Services
