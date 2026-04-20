@@ -7,13 +7,17 @@ class ConfirmDialog {
 
   static void show(
     BuildContext context, {
+    required String title,
+    required String message,
+    required String confirmLabel,
     required VoidCallback onConfirm,
+    Color? confirmColor,
   }) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const AppText.title('Confirmar exclusão'),
-        content: const AppText.body('Deseja excluir esta nota?'),
+        title: AppText.title(title),
+        content: AppText.body(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -24,7 +28,7 @@ class ConfirmDialog {
               Navigator.of(context).pop();
               onConfirm();
             },
-            child: AppText.button('Excluir', color: AppColors.error),
+            child: AppText.button(confirmLabel, color: confirmColor ?? AppColors.error),
           ),
         ],
       ),

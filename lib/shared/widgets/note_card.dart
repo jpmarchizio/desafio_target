@@ -71,6 +71,9 @@ class NoteCard extends StatelessWidget {
                 IconButton(
                   onPressed: () => ConfirmDialog.show(
                     context,
+                    title: 'Confirmar exclusão',
+                    message: 'Deseja excluir esta nota?',
+                    confirmLabel: 'Excluir',
                     onConfirm: onDelete,
                   ),
                   icon: Icon(Icons.delete_outline, size: 20, color: AppColors.error),

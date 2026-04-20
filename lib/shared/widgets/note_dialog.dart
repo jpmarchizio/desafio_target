@@ -70,6 +70,9 @@ class _NoteDialogState extends State<NoteDialog> {
   void _delete() {
     ConfirmDialog.show(
       context,
+      title: 'Confirmar exclusão',
+      message: 'Deseja excluir esta nota?',
+      confirmLabel: 'Excluir',
       onConfirm: () {
         Navigator.of(context).pop();
         widget.onDelete?.call();
