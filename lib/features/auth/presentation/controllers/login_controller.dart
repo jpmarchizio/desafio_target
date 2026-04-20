@@ -4,6 +4,7 @@ import 'package:desafio_target/core/result/result.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_in_anonymously_usecase.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
+import 'package:desafio_target/shared/utils/validators.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_controller.g.dart';
@@ -19,8 +20,11 @@ abstract class _LoginController with Store {
   @observable
   AuthStatusEnum status = AuthStatusEnum.initial;
 
-  @computed
-  bool get isLoading => status == AuthStatusEnum.loading;
+  @observable
+  bool isSigningIn = false;
+
+  @observable
+  bool isSigningInAnonymously = false;
 
   @observable
   String? errorMessage;
@@ -32,15 +36,32 @@ abstract class _LoginController with Store {
   void toggleObscurePassword() => obscurePassword = !obscurePassword;
 
   @action
-  void clearError() => errorMessage = null;
+  void clearError() {
+    errorMessage = null;
+    status = AuthStatusEnum.initial;
+  }
 
   @action
   Future<void> signIn(String email, String password) async {
     clearError();
-    status = AuthStatusEnum.loading;
+
+    if (email.isEmpty || password.isEmpty) {
+      errorMessage = 'Preencha e-mail e senha.';
+      status = AuthStatusEnum.error;
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      errorMessage = 'E-mail inválido.';
+      status = AuthStatusEnum.error;
+      return;
+    }
+
+    isSigningIn = true;
 
     final result = await _signIn(email, password);
     if (result is Failure) {
+      isSigningIn = false;
       errorMessage = (result as Failure).error.message;
       status = AuthStatusEnum.error;
 
@@ -53,10 +74,11 @@ abstract class _LoginController with Store {
   @action
   Future<void> signInAnonymously() async {
     clearError();
-    status = AuthStatusEnum.loading;
+    isSigningInAnonymously = true;
 
     final result = await _signInAnonymously();
     if (result is Failure) {
+      isSigningInAnonymously = false;
       errorMessage = (result as Failure).error.message;
       status = AuthStatusEnum.error;
 

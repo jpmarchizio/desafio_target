@@ -4,6 +4,7 @@ import 'package:desafio_target/core/theme/app_colors.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/login_controller.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
 import 'package:desafio_target/shared/widgets/app_button.dart';
+import 'package:desafio_target/shared/widgets/app_snack_bar.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
 import 'package:desafio_target/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,12 @@ class _LoginPageState extends State<LoginPage> {
       (_) => _loginController.status,
       (AuthStatusEnum status) {
         if (status == AuthStatusEnum.authenticated) context.go(AppRouter.home);
+        if (status == AuthStatusEnum.error) {
+          final error = _loginController.errorMessage;
+          if (error == null) return;
+
+          AppSnackBar.show(context, error);
+        }
       },
     );
   }
@@ -65,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
                   _forgotPassword(),
                   const SizedBox(height: 16),
                   _loginButton(),
-                  _errorMessage(),
                   const SizedBox(height: 16),
                   _divider(),
                   const SizedBox(height: 16),
@@ -147,23 +153,11 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton(
         label: 'Entrar',
-        isLoading: _loginController.isLoading,
-        onPressed: () => _loginController.signIn(_emailController.text.trim(), _passwordController.text),
+        isLoading: _loginController.isSigningIn,
+        onPressed: _loginController.isSigningInAnonymously
+            ? null
+            : () => _loginController.signIn(_emailController.text.trim(), _passwordController.text),
       ),
-    );
-  }
-
-  Widget _errorMessage() {
-    return Observer(
-      builder: (_) {
-        final error = _loginController.errorMessage;
-        if (error == null) return const SizedBox.shrink();
-
-        return Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: AppText.bodySmall(error, color: AppColors.error),
-        );
-      },
     );
   }
 
@@ -188,8 +182,8 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton.outlined(
         label: 'Continuar sem conta',
-        isLoading: _loginController.isLoading,
-        onPressed: _loginController.signInAnonymously,
+        isLoading: _loginController.isSigningInAnonymously,
+        onPressed: _loginController.isSigningIn ? null : _loginController.signInAnonymously,
       ),
     );
   }
