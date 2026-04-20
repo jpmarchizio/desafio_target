@@ -8,6 +8,7 @@ import 'package:desafio_target/features/auth/domain/usecases/sign_up_usecase.dar
 import 'package:desafio_target/features/auth/presentation/controllers/forgot_password_controller.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/login_controller.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/signup_controller.dart';
+import 'package:desafio_target/features/notes/presentation/controllers/note_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -35,4 +36,8 @@ Future<void> setupInjector() async {
   getIt.registerFactory<SignupController>(
     () => SignupController(getIt<SignUpUseCase>()),
   );
+
+  // Notes
+  // Controllers
+  getIt.registerFactory<NoteController>(() => NoteController());
 }

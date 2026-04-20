@@ -10,6 +10,7 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
+  final int? maxLines;
   final VoidCallback? onObscureToggle;
   final void Function(String)? onChanged;
   final void Function()? onEditingComplete;
@@ -22,6 +23,7 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
+    this.maxLines = 1,
     this.onObscureToggle,
     this.onChanged,
     this.onEditingComplete,
@@ -44,6 +46,7 @@ class AppTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
+          maxLines: obscureText ? 1 : maxLines,
           onChanged: onChanged,
           onEditingComplete: onEditingComplete,
           style: GoogleFonts.inter(
