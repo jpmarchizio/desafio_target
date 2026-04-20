@@ -3,6 +3,7 @@
 import 'package:desafio_target/core/result/result.dart';
 import 'package:desafio_target/features/auth/domain/usecases/send_password_reset_email_usecase.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
+import 'package:desafio_target/shared/utils/validators.dart';
 import 'package:mobx/mobx.dart';
 
 part 'forgot_password_controller.g.dart';
@@ -21,20 +22,27 @@ abstract class _ForgotPasswordController with Store {
   bool get isLoading => status == AuthStatusEnum.loading;
 
   @observable
-  String? errorMessage;
+  String email = '';
+
+  @observable
+  String? emailError;
+
+  @computed
+  bool get isFormValid => isValidEmail(email);
 
   @action
-  void clearError() => errorMessage = null;
+  void onEmailChanged(String value) {
+    email = value;
+    emailError = isValidEmail(value) ? null : 'E-mail inválido.';
+  }
 
   @action
-  Future<void> sendPasswordResetEmail(String email) async {
-    clearError();
+  Future<void> sendPasswordResetEmail() async {
     status = AuthStatusEnum.loading;
 
     final result = await _sendPasswordResetEmail(email);
 
     if (result is Failure) {
-      errorMessage = result.error.message;
       status = AuthStatusEnum.error;
 
       return;

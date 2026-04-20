@@ -4,6 +4,7 @@ import 'package:desafio_target/core/theme/app_colors.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/forgot_password_controller.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
 import 'package:desafio_target/shared/widgets/app_button.dart';
+import 'package:desafio_target/shared/widgets/app_snack_bar.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
 import 'package:desafio_target/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
@@ -20,19 +21,23 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
-  late final ForgotPasswordController _forgotPwdController;
+
+  late final ForgotPasswordController _controller;
   late final ReactionDisposer _statusDisposer;
 
   @override
   void initState() {
     super.initState();
-    _forgotPwdController = getIt<ForgotPasswordController>();
-    _statusDisposer = reaction((_) => _forgotPwdController.status, (AuthStatusEnum status) {
-      if (status == AuthStatusEnum.authenticated) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('E-mail de recuperação enviado.')));
-        context.canPop() ? context.pop() : context.go(AppRouter.login);
-      }
-    });
+    _controller = getIt<ForgotPasswordController>();
+    _statusDisposer = reaction(
+      (_) => _controller.status,
+      (AuthStatusEnum status) {
+        if (status == AuthStatusEnum.authenticated) {
+          AppSnackBar.show(context, 'Se este e-mail estiver cadastrado, você receberá um link de recuperação.');
+          context.canPop() ? context.pop() : context.go(AppRouter.login);
+        }
+      },
+    );
   }
 
   @override
@@ -67,7 +72,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   _emailField(),
                   const SizedBox(height: 16),
                   _sendButton(),
-                  _errorMessage(),
                 ],
               ),
             ),
@@ -96,13 +100,24 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Widget _emailField() {
-    return AppTextField(
-      label: 'E-mail',
-      hint: 'seu@email.com',
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      textInputAction: TextInputAction.done,
-      onChanged: (_) => _forgotPwdController.clearError(),
+    return Observer(
+      builder: (_) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppTextField(
+            label: 'E-mail',
+            hint: 'seu@email.com',
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.done,
+            onChanged: _controller.onEmailChanged,
+          ),
+          if (_controller.emailError != null) ...[
+            const SizedBox(height: 6),
+            AppText.bodySmall(_controller.emailError!, color: AppColors.error),
+          ],
+        ],
+      ),
     );
   }
 
@@ -110,23 +125,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Observer(
       builder: (_) => AppButton(
         label: 'Enviar',
-        isLoading: _forgotPwdController.isLoading,
-        onPressed: () => _forgotPwdController.sendPasswordResetEmail(_emailController.text.trim()),
+        isLoading: _controller.isLoading,
+        onPressed: _controller.isFormValid ? _controller.sendPasswordResetEmail : null,
       ),
-    );
-  }
-
-  Widget _errorMessage() {
-    return Observer(
-      builder: (_) {
-        final error = _forgotPwdController.errorMessage;
-        if (error == null) return const SizedBox.shrink();
-
-        return Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: AppText.bodySmall(error, color: AppColors.error),
-        );
-      },
     );
   }
 }

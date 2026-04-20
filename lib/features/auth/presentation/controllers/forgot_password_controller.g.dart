@@ -16,6 +16,13 @@ mixin _$ForgotPasswordController on _ForgotPasswordController, Store {
     () => super.isLoading,
     name: '_ForgotPasswordController.isLoading',
   )).value;
+  Computed<bool>? _$isFormValidComputed;
+
+  @override
+  bool get isFormValid => (_$isFormValidComputed ??= Computed<bool>(
+    () => super.isFormValid,
+    name: '_ForgotPasswordController.isFormValid',
+  )).value;
 
   late final _$statusAtom = Atom(
     name: '_ForgotPasswordController.status',
@@ -35,21 +42,39 @@ mixin _$ForgotPasswordController on _ForgotPasswordController, Store {
     });
   }
 
-  late final _$errorMessageAtom = Atom(
-    name: '_ForgotPasswordController.errorMessage',
+  late final _$emailAtom = Atom(
+    name: '_ForgotPasswordController.email',
     context: context,
   );
 
   @override
-  String? get errorMessage {
-    _$errorMessageAtom.reportRead();
-    return super.errorMessage;
+  String get email {
+    _$emailAtom.reportRead();
+    return super.email;
   }
 
   @override
-  set errorMessage(String? value) {
-    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
-      super.errorMessage = value;
+  set email(String value) {
+    _$emailAtom.reportWrite(value, super.email, () {
+      super.email = value;
+    });
+  }
+
+  late final _$emailErrorAtom = Atom(
+    name: '_ForgotPasswordController.emailError',
+    context: context,
+  );
+
+  @override
+  String? get emailError {
+    _$emailErrorAtom.reportRead();
+    return super.emailError;
+  }
+
+  @override
+  set emailError(String? value) {
+    _$emailErrorAtom.reportWrite(value, super.emailError, () {
+      super.emailError = value;
     });
   }
 
@@ -59,9 +84,9 @@ mixin _$ForgotPasswordController on _ForgotPasswordController, Store {
   );
 
   @override
-  Future<void> sendPasswordResetEmail(String email) {
+  Future<void> sendPasswordResetEmail() {
     return _$sendPasswordResetEmailAsyncAction.run(
-      () => super.sendPasswordResetEmail(email),
+      () => super.sendPasswordResetEmail(),
     );
   }
 
@@ -71,11 +96,11 @@ mixin _$ForgotPasswordController on _ForgotPasswordController, Store {
   );
 
   @override
-  void clearError() {
+  void onEmailChanged(String value) {
     final _$actionInfo = _$_ForgotPasswordControllerActionController
-        .startAction(name: '_ForgotPasswordController.clearError');
+        .startAction(name: '_ForgotPasswordController.onEmailChanged');
     try {
-      return super.clearError();
+      return super.onEmailChanged(value);
     } finally {
       _$_ForgotPasswordControllerActionController.endAction(_$actionInfo);
     }
@@ -85,8 +110,10 @@ mixin _$ForgotPasswordController on _ForgotPasswordController, Store {
   String toString() {
     return '''
 status: ${status},
-errorMessage: ${errorMessage},
-isLoading: ${isLoading}
+email: ${email},
+emailError: ${emailError},
+isLoading: ${isLoading},
+isFormValid: ${isFormValid}
     ''';
   }
 }
