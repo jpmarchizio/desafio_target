@@ -1,6 +1,7 @@
 import 'package:desafio_target/core/di/injector.dart';
 import 'package:desafio_target/core/navigation/app_router.dart';
 import 'package:desafio_target/core/theme/app_colors.dart';
+import 'package:desafio_target/core/theme/theme_controller.dart';
 import 'package:desafio_target/features/auth/presentation/controllers/login_controller.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
 import 'package:desafio_target/shared/widgets/app_button.dart';
@@ -8,6 +9,7 @@ import 'package:desafio_target/shared/widgets/app_snack_bar.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
 import 'package:desafio_target/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
@@ -29,18 +31,15 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _loginController = getIt<LoginController>();
-    _authDisposer = reaction(
-      (_) => _loginController.status,
-      (AuthStatusEnum status) {
-        if (status == AuthStatusEnum.authenticated) context.go(AppRouter.home);
-        if (status == AuthStatusEnum.error) {
-          final error = _loginController.errorMessage;
-          if (error == null) return;
+    _authDisposer = reaction((_) => _loginController.status, (AuthStatusEnum status) {
+      if (status == AuthStatusEnum.authenticated) context.go(AppRouter.home);
+      if (status == AuthStatusEnum.error) {
+        final error = _loginController.errorMessage;
+        if (error == null) return;
 
-          AppSnackBar.show(context, error);
-        }
-      },
-    );
+        AppSnackBar.show(context, error);
+      }
+    });
   }
 
   @override
@@ -53,7 +52,23 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = getIt<ThemeController>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        actions: [
+          Observer(
+            builder: (_) => IconButton(
+              icon: Icon(themeController.isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
+              onPressed: themeController.toggleTheme,
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -154,9 +169,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (_) => AppButton(
         label: 'Entrar',
         isLoading: _loginController.isSigningIn,
-        onPressed: _loginController.isSigningInAnonymously
-            ? null
-            : () => _loginController.signIn(_emailController.text.trim(), _passwordController.text),
+        onPressed: () => _loginController.signIn(_emailController.text.trim(), _passwordController.text),
       ),
     );
   }
@@ -182,8 +195,7 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton.outlined(
         label: 'Continuar sem conta',
-        isLoading: _loginController.isSigningInAnonymously,
-        onPressed: _loginController.isSigningIn ? null : _loginController.signInAnonymously,
+        onPressed: _loginController.isSigningIn ? null : () => context.go(AppRouter.home),
       ),
     );
   }

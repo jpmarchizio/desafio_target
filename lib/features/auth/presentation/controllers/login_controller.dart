@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:desafio_target/core/result/result.dart';
-import 'package:desafio_target/features/auth/domain/usecases/sign_in_anonymously_usecase.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
 import 'package:desafio_target/shared/utils/validators.dart';
@@ -13,18 +12,14 @@ class LoginController = _LoginController with _$LoginController;
 
 abstract class _LoginController with Store {
   final SignInUseCase _signIn;
-  final SignInAnonymouslyUseCase _signInAnonymously;
 
-  _LoginController(this._signIn, this._signInAnonymously);
+  _LoginController(this._signIn);
 
   @observable
   AuthStatusEnum status = AuthStatusEnum.initial;
 
   @observable
   bool isSigningIn = false;
-
-  @observable
-  bool isSigningInAnonymously = false;
 
   @observable
   String? errorMessage;
@@ -62,23 +57,6 @@ abstract class _LoginController with Store {
     final result = await _signIn(email, password);
     if (result is Failure) {
       isSigningIn = false;
-      errorMessage = (result as Failure).error.message;
-      status = AuthStatusEnum.error;
-
-      return;
-    }
-
-    status = AuthStatusEnum.authenticated;
-  }
-
-  @action
-  Future<void> signInAnonymously() async {
-    clearError();
-    isSigningInAnonymously = true;
-
-    final result = await _signInAnonymously();
-    if (result is Failure) {
-      isSigningInAnonymously = false;
       errorMessage = (result as Failure).error.message;
       status = AuthStatusEnum.error;
 

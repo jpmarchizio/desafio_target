@@ -45,28 +45,6 @@ mixin _$LoginController on _LoginController, Store {
     });
   }
 
-  late final _$isSigningInAnonymouslyAtom = Atom(
-    name: '_LoginController.isSigningInAnonymously',
-    context: context,
-  );
-
-  @override
-  bool get isSigningInAnonymously {
-    _$isSigningInAnonymouslyAtom.reportRead();
-    return super.isSigningInAnonymously;
-  }
-
-  @override
-  set isSigningInAnonymously(bool value) {
-    _$isSigningInAnonymouslyAtom.reportWrite(
-      value,
-      super.isSigningInAnonymously,
-      () {
-        super.isSigningInAnonymously = value;
-      },
-    );
-  }
-
   late final _$errorMessageAtom = Atom(
     name: '_LoginController.errorMessage',
     context: context,
@@ -113,16 +91,6 @@ mixin _$LoginController on _LoginController, Store {
     return _$signInAsyncAction.run(() => super.signIn(email, password));
   }
 
-  late final _$signInAnonymouslyAsyncAction = AsyncAction(
-    '_LoginController.signInAnonymously',
-    context: context,
-  );
-
-  @override
-  Future<void> signInAnonymously() {
-    return _$signInAnonymouslyAsyncAction.run(() => super.signInAnonymously());
-  }
-
   late final _$_LoginControllerActionController = ActionController(
     name: '_LoginController',
     context: context,
@@ -157,7 +125,6 @@ mixin _$LoginController on _LoginController, Store {
     return '''
 status: ${status},
 isSigningIn: ${isSigningIn},
-isSigningInAnonymously: ${isSigningInAnonymously},
 errorMessage: ${errorMessage},
 obscurePassword: ${obscurePassword}
     ''';

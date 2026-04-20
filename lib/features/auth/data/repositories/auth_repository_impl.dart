@@ -12,9 +12,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<User>> signIn(String email, String password) => _datasource.signIn(email, password);
 
   @override
-  Future<Result<User>> signInAnonymously() => _datasource.signInAnonymously();
-
-  @override
   Future<Result<User>> signUp(String email, String password) =>
       _datasource.signUp(email, password);
 
