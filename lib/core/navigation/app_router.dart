@@ -1,7 +1,9 @@
 import 'package:desafio_target/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:desafio_target/features/auth/presentation/pages/login_page.dart';
 import 'package:desafio_target/features/auth/presentation/pages/signup_page.dart';
+import 'package:desafio_target/features/notes/data/datasources/note_local_datasource.dart';
 import 'package:desafio_target/features/notes/presentation/pages/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +18,12 @@ class AppRouter {
 
   static final router = GoRouter(
     initialLocation: login,
+    redirect: (_, state) {
+      if (state.matchedLocation != login) return null;
+      if (FirebaseAuth.instance.currentUser != null) return home;
+      if (NoteLocalDataSource().getNotes().isNotEmpty) return home;
+      return null;
+    },
     routes: [
       GoRoute(path: login, builder: (_, _) => const LoginPage()),
       GoRoute(path: signup, builder: (_, _) => const SignupPage()),

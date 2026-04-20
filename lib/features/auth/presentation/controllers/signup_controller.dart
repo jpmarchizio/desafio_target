@@ -3,6 +3,7 @@
 import 'package:desafio_target/core/result/result.dart';
 import 'package:desafio_target/features/auth/domain/usecases/sign_up_usecase.dart';
 import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
+import 'package:desafio_target/features/notes/domain/usecases/migrate_notes_usecase.dart';
 import 'package:desafio_target/shared/utils/validators.dart';
 import 'package:mobx/mobx.dart';
 
@@ -12,8 +13,9 @@ class SignupController = _SignupController with _$SignupController;
 
 abstract class _SignupController with Store {
   final SignUpUseCase _signUp;
+  final MigrateNotesUseCase _migrateNotes;
 
-  _SignupController(this._signUp);
+  _SignupController(this._signUp, this._migrateNotes);
 
   @observable
   AuthStatusEnum status = AuthStatusEnum.initial;
@@ -44,10 +46,7 @@ abstract class _SignupController with Store {
 
   @computed
   bool get isFormValid =>
-      isValidEmail(email) &&
-      password.length >= 6 &&
-      confirmPassword.isNotEmpty &&
-      password == confirmPassword;
+      isValidEmail(email) && password.length >= 6 && confirmPassword.isNotEmpty && password == confirmPassword;
 
   @computed
   String? get passwordError =>
@@ -91,13 +90,14 @@ abstract class _SignupController with Store {
     status = AuthStatusEnum.loading;
 
     final result = await _signUp(email, password);
-
     if (result is Failure) {
       errorMessage = (result as Failure).error.message;
       status = AuthStatusEnum.error;
-
       return;
     }
+
+    final uid = (result as Success).data.uid;
+    await _migrateNotes(uid);
 
     status = AuthStatusEnum.authenticated;
   }
