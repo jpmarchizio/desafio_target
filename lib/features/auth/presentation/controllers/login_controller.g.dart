@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_controller.dart';
+part of 'login_controller.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,27 +8,35 @@ part of 'auth_controller.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$AuthController on _AuthController, Store {
-  late final _$isLoadingAtom = Atom(
-    name: '_AuthController.isLoading',
+mixin _$LoginController on _LoginController, Store {
+  Computed<bool>? _$isLoadingComputed;
+
+  @override
+  bool get isLoading => (_$isLoadingComputed ??= Computed<bool>(
+    () => super.isLoading,
+    name: '_LoginController.isLoading',
+  )).value;
+
+  late final _$statusAtom = Atom(
+    name: '_LoginController.status',
     context: context,
   );
 
   @override
-  bool get isLoading {
-    _$isLoadingAtom.reportRead();
-    return super.isLoading;
+  AuthStatusEnum get status {
+    _$statusAtom.reportRead();
+    return super.status;
   }
 
   @override
-  set isLoading(bool value) {
-    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
-      super.isLoading = value;
+  set status(AuthStatusEnum value) {
+    _$statusAtom.reportWrite(value, super.status, () {
+      super.status = value;
     });
   }
 
   late final _$errorMessageAtom = Atom(
-    name: '_AuthController.errorMessage',
+    name: '_LoginController.errorMessage',
     context: context,
   );
 
@@ -46,7 +54,7 @@ mixin _$AuthController on _AuthController, Store {
   }
 
   late final _$obscurePasswordAtom = Atom(
-    name: '_AuthController.obscurePassword',
+    name: '_LoginController.obscurePassword',
     context: context,
   );
 
@@ -64,7 +72,7 @@ mixin _$AuthController on _AuthController, Store {
   }
 
   late final _$signInAsyncAction = AsyncAction(
-    '_AuthController.signIn',
+    '_LoginController.signIn',
     context: context,
   );
 
@@ -74,7 +82,7 @@ mixin _$AuthController on _AuthController, Store {
   }
 
   late final _$signInAnonymouslyAsyncAction = AsyncAction(
-    '_AuthController.signInAnonymously',
+    '_LoginController.signInAnonymously',
     context: context,
   );
 
@@ -83,41 +91,42 @@ mixin _$AuthController on _AuthController, Store {
     return _$signInAnonymouslyAsyncAction.run(() => super.signInAnonymously());
   }
 
-  late final _$_AuthControllerActionController = ActionController(
-    name: '_AuthController',
+  late final _$_LoginControllerActionController = ActionController(
+    name: '_LoginController',
     context: context,
   );
 
   @override
   void toggleObscurePassword() {
-    final _$actionInfo = _$_AuthControllerActionController.startAction(
-      name: '_AuthController.toggleObscurePassword',
+    final _$actionInfo = _$_LoginControllerActionController.startAction(
+      name: '_LoginController.toggleObscurePassword',
     );
     try {
       return super.toggleObscurePassword();
     } finally {
-      _$_AuthControllerActionController.endAction(_$actionInfo);
+      _$_LoginControllerActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void clearError() {
-    final _$actionInfo = _$_AuthControllerActionController.startAction(
-      name: '_AuthController.clearError',
+    final _$actionInfo = _$_LoginControllerActionController.startAction(
+      name: '_LoginController.clearError',
     );
     try {
       return super.clearError();
     } finally {
-      _$_AuthControllerActionController.endAction(_$actionInfo);
+      _$_LoginControllerActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   String toString() {
     return '''
-isLoading: ${isLoading},
+status: ${status},
 errorMessage: ${errorMessage},
-obscurePassword: ${obscurePassword}
+obscurePassword: ${obscurePassword},
+isLoading: ${isLoading}
     ''';
   }
 }

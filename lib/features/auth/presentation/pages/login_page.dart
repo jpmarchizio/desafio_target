@@ -1,13 +1,15 @@
 import 'package:desafio_target/core/di/injector.dart';
 import 'package:desafio_target/core/navigation/app_router.dart';
 import 'package:desafio_target/core/theme/app_colors.dart';
-import 'package:desafio_target/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:desafio_target/features/auth/presentation/controllers/login_controller.dart';
+import 'package:desafio_target/features/auth/presentation/enums/auth_status_enum.dart';
 import 'package:desafio_target/shared/widgets/app_button.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
 import 'package:desafio_target/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobx/mobx.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,18 +21,26 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  late final AuthController _authController;
+  late final LoginController _loginController;
+  late final ReactionDisposer _authDisposer;
 
   @override
   void initState() {
     super.initState();
-    _authController = getIt<AuthController>();
+    _loginController = getIt<LoginController>();
+    _authDisposer = reaction(
+      (_) => _loginController.status,
+      (AuthStatusEnum status) {
+        if (status == AuthStatusEnum.authenticated) context.go(AppRouter.home);
+      },
+    );
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _authDisposer();
     super.dispose();
   }
 
@@ -97,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       hint: 'seu@email.com',
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      onChanged: (_) => _authController.clearError(),
+      onChanged: (_) => _loginController.clearError(),
     );
   }
 
@@ -107,10 +117,10 @@ class _LoginPageState extends State<LoginPage> {
         label: 'Senha',
         hint: '••••••••',
         controller: _passwordController,
-        obscureText: _authController.obscurePassword,
+        obscureText: _loginController.obscurePassword,
         textInputAction: TextInputAction.done,
-        onObscureToggle: _authController.toggleObscurePassword,
-        onChanged: (_) => _authController.clearError(),
+        onObscureToggle: _loginController.toggleObscurePassword,
+        onChanged: (_) => _loginController.clearError(),
       ),
     );
   }
@@ -137,8 +147,8 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton(
         label: 'Entrar',
-        isLoading: _authController.isLoading,
-        onPressed: () => _authController.signIn(_emailController.text.trim(), _passwordController.text),
+        isLoading: _loginController.isLoading,
+        onPressed: () => _loginController.signIn(_emailController.text.trim(), _passwordController.text),
       ),
     );
   }
@@ -146,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _errorMessage() {
     return Observer(
       builder: (_) {
-        final error = _authController.errorMessage;
+        final error = _loginController.errorMessage;
         if (error == null) return const SizedBox.shrink();
 
         return Padding(
@@ -178,8 +188,8 @@ class _LoginPageState extends State<LoginPage> {
     return Observer(
       builder: (_) => AppButton.outlined(
         label: 'Continuar sem conta',
-        isLoading: _authController.isLoading,
-        onPressed: _authController.signInAnonymously,
+        isLoading: _loginController.isLoading,
+        onPressed: _loginController.signInAnonymously,
       ),
     );
   }
