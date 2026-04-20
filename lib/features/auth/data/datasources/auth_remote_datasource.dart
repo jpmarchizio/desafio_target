@@ -32,4 +32,14 @@ class AuthRemoteDataSource {
       return Failure(ErrorHandler.handleFirebaseAuth(e));
     }
   }
+
+  Future<Result<void>> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+
+      return const Success(null);
+    } catch (e) {
+      return Failure(ErrorHandler.handleFirebaseAuth(e));
+    }
+  }
 }

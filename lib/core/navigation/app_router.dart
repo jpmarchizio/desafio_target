@@ -1,3 +1,4 @@
+import 'package:desafio_target/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:desafio_target/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,10 +20,7 @@ class AppRouter {
         path: signup,
         builder: (_, _) => const Scaffold(body: Center(child: Text('Criar conta'))),
       ),
-      GoRoute(
-        path: forgotPassword,
-        builder: (_, _) => const Scaffold(body: Center(child: Text('Esqueci a senha'))),
-      ),
+      GoRoute(path: forgotPassword, builder: (_, _) => const ForgotPasswordPage()),
       GoRoute(
         path: home,
         builder: (_, _) => const Scaffold(body: Center(child: Text('Home'))),
