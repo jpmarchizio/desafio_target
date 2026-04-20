@@ -12,11 +12,30 @@ abstract class _NoteController with Store {
   ObservableList<NoteModel> notes = ObservableList();
 
   @action
-  void addNote(String? title, String content) {}
+  void addNote(String? title, String content) {
+    notes.add(NoteModel(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      title: title,
+      content: content,
+      createdAt: DateTime.now(),
+    ));
+  }
 
   @action
-  void editNote(NoteModel note, String? title, String content) {}
+  void editNote(NoteModel note, String? title, String content) {
+    final index = notes.indexWhere((n) => n.id == note.id);
+    if (index == -1) return;
+
+    notes[index] = NoteModel(
+      id: note.id,
+      title: title,
+      content: content,
+      createdAt: note.createdAt,
+    );
+  }
 
   @action
-  void deleteNote(String id) {}
+  void deleteNote(String id) {
+    notes.removeWhere((n) => n.id == id);
+  }
 }

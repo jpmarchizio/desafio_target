@@ -1,6 +1,7 @@
 import 'package:desafio_target/core/theme/app_colors.dart';
 import 'package:desafio_target/features/notes/domain/models/note_model.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
+import 'package:desafio_target/shared/widgets/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
 class NoteCard extends StatelessWidget {
@@ -42,13 +43,15 @@ class NoteCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  hasTitle ? AppText.title(displayTitle) : AppText.body(displayTitle),
+                  hasTitle
+                      ? AppText.title(displayTitle, maxLines: 1, overflow: TextOverflow.ellipsis)
+                      : AppText.body(displayTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
                   if (hasTitle) ...[
                     const SizedBox(height: 4),
                     AppText.body(
                       note.content,
                       color: textSecondary,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -66,7 +69,10 @@ class NoteCard extends StatelessWidget {
                   padding: EdgeInsets.zero,
                 ),
                 IconButton(
-                  onPressed: onDelete,
+                  onPressed: () => ConfirmDialog.show(
+                    context,
+                    onConfirm: onDelete,
+                  ),
                   icon: Icon(Icons.delete_outline, size: 20, color: AppColors.error),
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,

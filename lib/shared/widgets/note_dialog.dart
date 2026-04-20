@@ -3,6 +3,7 @@ import 'package:desafio_target/features/notes/domain/models/note_model.dart';
 import 'package:desafio_target/shared/widgets/app_button.dart';
 import 'package:desafio_target/shared/widgets/app_text.dart';
 import 'package:desafio_target/shared/widgets/app_text_field.dart';
+import 'package:desafio_target/shared/widgets/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
 class NoteDialog extends StatefulWidget {
@@ -67,8 +68,13 @@ class _NoteDialogState extends State<NoteDialog> {
   }
 
   void _delete() {
-    Navigator.of(context).pop();
-    widget.onDelete?.call();
+    ConfirmDialog.show(
+      context,
+      onConfirm: () {
+        Navigator.of(context).pop();
+        widget.onDelete?.call();
+      },
+    );
   }
 
   @override
