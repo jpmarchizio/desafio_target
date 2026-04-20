@@ -1,3 +1,4 @@
+import 'package:desafio_target/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,10 +14,7 @@ class AppRouter {
   static final router = GoRouter(
     initialLocation: login,
     routes: [
-      GoRoute(
-        path: login,
-        builder: (_, _) => const Scaffold(body: Center(child: Text('Login'))),
-      ),
+      GoRoute(path: login, builder: (_, _) => const LoginPage()),
       GoRoute(
         path: signup,
         builder: (_, _) => const Scaffold(body: Center(child: Text('Criar conta'))),

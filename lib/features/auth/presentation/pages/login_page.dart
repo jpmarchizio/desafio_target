@@ -1,0 +1,205 @@
+import 'package:desafio_target/core/di/injector.dart';
+import 'package:desafio_target/core/navigation/app_router.dart';
+import 'package:desafio_target/core/theme/app_colors.dart';
+import 'package:desafio_target/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:desafio_target/shared/widgets/app_button.dart';
+import 'package:desafio_target/shared/widgets/app_text.dart';
+import 'package:desafio_target/shared/widgets/app_text_field.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  late final AuthController _authController;
+
+  @override
+  void initState() {
+    super.initState();
+    _authController = getIt<AuthController>();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _logo(),
+                  const SizedBox(height: 48),
+                  _emailField(),
+                  const SizedBox(height: 12),
+                  _passwordField(),
+                  const SizedBox(height: 4),
+                  _forgotPassword(),
+                  const SizedBox(height: 16),
+                  _loginButton(),
+                  _errorMessage(),
+                  const SizedBox(height: 16),
+                  _divider(),
+                  const SizedBox(height: 16),
+                  _anonymousButton(),
+                  const SizedBox(height: 32),
+                  _signUp(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _logo() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColors.primaryDark : AppColors.primary;
+
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(color: primary, borderRadius: BorderRadius.circular(18)),
+            child: const Icon(Icons.checklist_rounded, color: Colors.white, size: 32),
+          ),
+          const SizedBox(height: 12),
+          const AppText.headline('Target To-Do'),
+        ],
+      ),
+    );
+  }
+
+  Widget _emailField() {
+    return AppTextField(
+      label: 'E-mail',
+      hint: 'seu@email.com',
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      onChanged: (_) => _authController.clearError(),
+    );
+  }
+
+  Widget _passwordField() {
+    return Observer(
+      builder: (_) => AppTextField(
+        label: 'Senha',
+        hint: '••••••••',
+        controller: _passwordController,
+        obscureText: _authController.obscurePassword,
+        textInputAction: TextInputAction.done,
+        onObscureToggle: _authController.toggleObscurePassword,
+        onChanged: (_) => _authController.clearError(),
+      ),
+    );
+  }
+
+  Widget _forgotPassword() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = isDark ? AppColors.primaryDark : AppColors.primary;
+
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton(
+        onPressed: () => context.go(AppRouter.forgotPassword),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: AppText.bodySmall('Esqueci a senha', color: primary),
+      ),
+    );
+  }
+
+  Widget _loginButton() {
+    return Observer(
+      builder: (_) => AppButton(
+        label: 'Entrar',
+        isLoading: _authController.isLoading,
+        onPressed: () => _authController.signIn(_emailController.text.trim(), _passwordController.text),
+      ),
+    );
+  }
+
+  Widget _errorMessage() {
+    return Observer(
+      builder: (_) {
+        final error = _authController.errorMessage;
+        if (error == null) return const SizedBox.shrink();
+
+        return Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: AppText.bodySmall(error, color: AppColors.error),
+        );
+      },
+    );
+  }
+
+  Widget _divider() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final border = isDark ? AppColors.borderDark : AppColors.borderLight;
+
+    return Row(
+      children: [
+        Expanded(child: Divider(color: border)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: AppText.label('ou', color: textSecondary),
+        ),
+        Expanded(child: Divider(color: border)),
+      ],
+    );
+  }
+
+  Widget _anonymousButton() {
+    return Observer(
+      builder: (_) => AppButton.outlined(
+        label: 'Continuar sem conta',
+        isLoading: _authController.isLoading,
+        onPressed: _authController.signInAnonymously,
+      ),
+    );
+  }
+
+  Widget _signUp() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final primary = isDark ? AppColors.primaryDark : AppColors.primary;
+
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppText.bodySmall('Não tem conta? ', color: textSecondary),
+          GestureDetector(
+            onTap: () => context.go(AppRouter.signup),
+            child: AppText.bodySmall('Criar conta', color: primary),
+          ),
+        ],
+      ),
+    );
+  }
+}
